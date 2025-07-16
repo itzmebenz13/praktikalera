@@ -149,11 +149,10 @@
             <!-- Collapsible Mobile Menu -->
             <div id="mobile-menu" class="md:hidden absolute top-full left-0 w-full rounded-b-2xl shadow-lg">
                 <nav class="flex flex-col p-4 space-y-1">
+                    <a href="#" class="font-semibold text-lg px-4 py-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Deals</a>
+                    <a href="#" class="font-semibold text-lg px-4 py-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Tips</a>
+                    <a href="#" class="font-semibold text-lg px-4 py-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Tools</a>
                     <a href="login.html" class="primary-button text-center font-semibold text-lg px-4 py-3 rounded-lg mt-2">Login</a>
-                    <a href="deals.html" class="font-semibold text-lg px-4 py-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Deals</a>
-                    <a href="tips.html" class="font-semibold text-lg px-4 py-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Tips</a>
-                    <a href="tools.html" class="font-semibold text-lg px-4 py-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Tools</a>
-                    <a href="about.html" class="font-semibold text-lg px-4 py-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">About</a>
                 </nav>
             </div>
         </div>
@@ -289,9 +288,36 @@
             </div>
         </section>
 
-        <!-- All other sections are preserved below -->
-        <!-- ... -->
+        <!-- Tools Section -->
+        <section class="py-16 fade-in-up" style="animation-delay: 0.6s;">
+             <h2 class="text-3xl md:text-4xl font-black tracking-tight mb-8 text-center">Praktikal Tools</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <a href="#" class="deal-card p-8 text-center flex-col items-center justify-center">
+                    <div class="p-4 rounded-full primary-gradient-bg inline-block mb-4"><svg class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l-6-2m0 0l-3 9m12-9l-3 9m0 0l-3-1m-6 0l-3-1m12 0l-3-1m0 0l-3 9m3-9l3-1m0 0l3 9m-9-9l3-1m0 0l3 9" /></svg></div>
+                    <h3 class="text-2xl font-bold">Money Saver</h3>
+                    <p class="mt-2" style="color: var(--text-muted-color);">Calculate your total net worth across all your accounts.</p>
+                </a>
+                <a href="#" class="deal-card p-8 text-center flex-col items-center justify-center">
+                    <div class="p-4 rounded-full primary-gradient-bg inline-block mb-4"><svg class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></div>
+                    <h3 class="text-2xl font-bold">Money Monitor</h3>
+                    <p class="mt-2" style="color: var(--text-muted-color);">Track your daily expenses and income with ease.</p>
+                </a>
+            </div>
+        </section>
 
+        <!-- Newsletter Subscription -->
+        <section class="py-16 fade-in-up" style="animation-delay: 0.8s;">
+            <div class="relative rounded-2xl p-8 md:p-12 text-center overflow-hidden deal-card">
+                <div class="relative z-10">
+                    <h2 class="text-3xl font-bold">Get the Best Deals First</h2>
+                    <p class="mt-2 max-w-2xl mx-auto" style="color: var(--text-muted-color);">Subscribe to our newsletter and get the hottest deals, vouchers, and tips delivered straight to your inbox.</p>
+                    <form class="mt-6 max-w-md mx-auto flex flex-col sm:flex-row gap-4">
+                        <input type="email" placeholder="Enter your email" class="w-full px-4 py-3 rounded-lg border-none text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500" style="background-color: var(--bg-color); border: 1px solid var(--card-border-color);">
+                        <button type="submit" class="primary-button font-bold px-6 py-3 rounded-lg transition-colors flex-shrink-0">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
@@ -399,6 +425,10 @@
         const cartBadge = document.getElementById('cart-badge');
         let wishlistCount = 0;
         let cart = JSON.parse(localStorage.getItem('praktikalCart')) || [];
+        
+        // This is a placeholder to simulate a user's login status.
+        // In a real app, this would be determined by a secure session.
+        const isUserLoggedIn = localStorage.getItem('isUserLoggedIn') === 'true';
 
         function updateCartBadge() {
             const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -414,6 +444,12 @@
             button.addEventListener('click', (e) => {
                 e.preventDefault(); 
                 e.stopPropagation();
+                
+                if (!isUserLoggedIn) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
                 const isActive = button.classList.toggle('active');
                 wishlistCount += isActive ? 1 : -1;
                 wishlistBadge.classList.toggle('hidden', wishlistCount === 0);
@@ -426,6 +462,11 @@
                 addToCartBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
+
+                    if (!isUserLoggedIn) {
+                        window.location.href = 'login.html';
+                        return; // Stop the function if user is not logged in
+                    }
                     
                     const product = {
                         id: card.querySelector('h3').textContent,
