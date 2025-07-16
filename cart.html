@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cart - Praktikal Era</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* --- HIGH-CONTRAST THEME (Same as main page) --- */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #111827;
+            --text-muted-color: #4b5563;
+            --card-bg-color: #f9fafb;
+            --card-border-color: #e5e7eb;
+            --header-bg: rgba(255, 255, 255, 0.7);
+            --primary-grad-from: #0d9488;
+            --primary-grad-to: #22d3ee;
+        }
+        .dark {
+            --bg-color: #020617;
+            --text-color: #f9fafb;
+            --text-muted-color: #9ca3af;
+            --card-bg-color: #111827;
+            --card-border-color: #334155;
+            --header-bg: rgba(2, 6, 23, 0.7);
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .primary-gradient-text {
+            background: linear-gradient(to right, var(--primary-grad-from), var(--primary-grad-to));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .primary-button {
+            background-image: linear-gradient(to right, var(--primary-grad-from), var(--primary-grad-to));
+            background-size: 200% auto;
+            color: white;
+            transition: background-position 0.5s ease;
+        }
+        .primary-button:hover:not(:disabled) { background-position: right center; }
+        .glass-header {
+            background-color: var(--header-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--card-border-color);
+        }
+        #mobile-menu {
+            background-color: var(--header-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border-color);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    
+    <!-- Header -->
+    <header id="main-header" class="sticky top-0 z-50 glass-header">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center space-x-2">
+                    <svg class="h-8 w-8 primary-gradient-text" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 6v-1.646a4 4 0 00-4-4H6a4 4 0 00-4 4v1.646M12 20v1.646a4 4 0 01-4 4H6a4 4 0 01-4-4V18.354M12 6h3.5A2.5 2.5 0 0118 8.5v.01M12 20h3.5A2.5 2.5 0 0018 17.5v-.01"/></svg>
+                    <span class="text-2xl font-black tracking-tighter">Praktikal Era</span>
+                </a>
+                <!-- Right Side Actions -->
+                <div class="flex items-center space-x-3">
+                    <button id="theme-switcher" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+                        <svg id="sun-icon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 12a5 5 0 100-10 5 5 0 000 10z"></path></svg>
+                        <svg id="moon-icon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <header class="mb-8">
+            <h1 class="text-4xl font-black tracking-tight">My Cart</h1>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <!-- Cart Items -->
+            <div id="cart-items-container" class="lg:col-span-2 space-y-4">
+                <!-- Items will be injected here by JS -->
+                <!-- Empty Cart Message -->
+                <div id="empty-cart-message" class="hidden text-center p-8 rounded-lg" style="background-color: var(--card-bg-color); border: 1px solid var(--card-border-color);">
+                    <svg class="mx-auto h-12 w-12" style="color: var(--text-muted-color);" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                    <h3 class="mt-2 text-xl font-semibold">Your cart is empty</h3>
+                    <p class="mt-1 text-sm" style="color: var(--text-muted-color);">Looks like you haven't added anything to your cart yet.</p>
+                    <a href="index.html" class="primary-button inline-block mt-4 px-6 py-2 rounded-lg font-semibold">Start Shopping</a>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="lg:col-span-1 sticky top-24">
+                <div class="p-6 rounded-lg" style="background-color: var(--card-bg-color); border: 1px solid var(--card-border-color);">
+                    <h2 class="text-xl font-bold border-b pb-4" style="border-color: var(--card-border-color);">Order Summary</h2>
+                    <div class="space-y-4 py-4">
+                        <div class="flex justify-between">
+                            <span style="color: var(--text-muted-color);">Subtotal</span>
+                            <span id="summary-subtotal" class="font-semibold">₱0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span style="color: var(--text-muted-color);">Shipping</span>
+                            <span id="summary-shipping" class="font-semibold">₱50.00</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between font-bold text-lg border-t pt-4" style="border-color: var(--card-border-color);">
+                        <span>Total</span>
+                        <span id="summary-total">₱50.00</span>
+                    </div>
+                    <button id="checkout-btn" class="primary-button w-full mt-6 py-3 rounded-lg font-bold">Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- Theme Switcher Logic ---
+        const themeSwitcher = document.getElementById('theme-switcher');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            }
+        };
+        const currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        applyTheme(currentTheme);
+        themeSwitcher.addEventListener('click', () => {
+            const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        });
+
+        // --- Cart Page Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const cartItemsContainer = document.getElementById('cart-items-container');
+            const emptyCartMessage = document.getElementById('empty-cart-message');
+            const subtotalEl = document.getElementById('summary-subtotal');
+            const shippingEl = document.getElementById('summary-shipping');
+            const totalEl = document.getElementById('summary-total');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            let cart = JSON.parse(localStorage.getItem('praktikalCart')) || [];
+
+            function renderCart() {
+                cartItemsContainer.innerHTML = ''; // Clear existing items
+                if (cart.length === 0) {
+                    emptyCartMessage.classList.remove('hidden');
+                    checkoutBtn.disabled = true;
+                    checkoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    emptyCartMessage.classList.add('hidden');
+                    checkoutBtn.disabled = false;
+                    checkoutBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    cart.forEach(item => {
+                        const itemEl = document.createElement('div');
+                        itemEl.className = 'flex items-center gap-4 p-4 rounded-lg';
+                        itemEl.style.backgroundColor = 'var(--card-bg-color)';
+                        itemEl.style.border = '1px solid var(--card-border-color)';
+                        itemEl.innerHTML = `
+                            <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-md">
+                            <div class="flex-grow">
+                                <h3 class="font-bold">${item.name}</h3>
+                                <p class="text-sm" style="color: var(--text-muted-color);">${item.store}</p>
+                                <p class="font-bold text-lg mt-1">₱${item.price.toFixed(2)}</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="number" value="${item.quantity}" min="1" class="w-16 text-center p-1 rounded" style="background-color: var(--bg-color); border: 1px solid var(--card-border-color);" data-id="${item.id}">
+                            </div>
+                            <button class="remove-item-btn p-2 rounded-full hover:bg-red-500/10 text-red-500" data-id="${item.id}">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
+                        `;
+                        cartItemsContainer.appendChild(itemEl);
+                    });
+                }
+                updateSummary();
+            }
+
+            function updateSummary() {
+                const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const shipping = cart.length > 0 ? 50.00 : 0;
+                const total = subtotal + shipping;
+
+                subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
+                shippingEl.textContent = `₱${shipping.toFixed(2)}`;
+                totalEl.textContent = `₱${total.toFixed(2)}`;
+            }
+
+            cartItemsContainer.addEventListener('click', (e) => {
+                if (e.target.closest('.remove-item-btn')) {
+                    const itemId = e.target.closest('.remove-item-btn').dataset.id;
+                    cart = cart.filter(item => item.id !== itemId);
+                    localStorage.setItem('praktikalCart', JSON.stringify(cart));
+                    renderCart();
+                }
+            });
+
+            cartItemsContainer.addEventListener('change', (e) => {
+                if (e.target.tagName === 'INPUT') {
+                    const itemId = e.target.dataset.id;
+                    const newQuantity = parseInt(e.target.value, 10);
+                    const itemInCart = cart.find(item => item.id === itemId);
+                    if (itemInCart && newQuantity > 0) {
+                        itemInCart.quantity = newQuantity;
+                        localStorage.setItem('praktikalCart', JSON.stringify(cart));
+                        updateSummary();
+                    }
+                }
+            });
+
+            renderCart();
+        });
+    </script>
+</body>
+</html>
