@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed - Praktikal Era</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-color: #ffffff; --text-color: #111827; --text-muted-color: #4b5563;
+            --card-bg-color: #f9fafb; --card-border-color: #e5e7eb; --header-bg: rgba(255, 255, 255, 0.7);
+            --primary-grad-from: #0d9488; --primary-grad-to: #22d3ee;
+        }
+        .dark {
+            --bg-color: #020617; --text-color: #f9fafb; --text-muted-color: #9ca3af;
+            --card-bg-color: #111827; --card-border-color: #334155; --header-bg: rgba(2, 6, 23, 0.7);
+        }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: background-color 0.3s, color 0.3s; }
+        .primary-button { background-image: linear-gradient(to right, var(--primary-grad-from), var(--primary-grad-to)); background-size: 200% auto; color: white; transition: background-position 0.5s ease; }
+        .primary-button:hover { background-position: right center; }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-2xl">
+        <div class="text-center p-8 md:p-12 rounded-2xl" style="background-color: var(--card-bg-color); border: 1px solid var(--card-border-color);">
+            <div class="w-24 h-24 mx-auto rounded-full flex items-center justify-center primary-gradient-bg">
+                <svg class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+            </div>
+            <h1 class="text-4xl font-black tracking-tight mt-6">Thank You!</h1>
+            <p class="mt-2 text-lg" style="color: var(--text-muted-color);">Your order has been confirmed.</p>
+            <p class="mt-4 text-sm" style="color: var(--text-muted-color);">
+                Order ID: <span id="order-id" class="font-mono">#00000000</span><br>
+                A confirmation email has been sent to your address.
+            </p>
+            <a href="index.html" class="primary-button inline-block mt-8 px-8 py-3 rounded-lg font-bold">Continue Shopping</a>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+              document.documentElement.classList.add('dark');
+            }
+            // Generate a random order ID for demonstration
+            document.getElementById('order-id').textContent = `#${Math.floor(Math.random() * 90000000) + 10000000}`;
+            
+            // Clear the cart after a successful order
+            localStorage.removeItem('praktikalCart');
+        });
+    </script>
+</body>
+</html>
