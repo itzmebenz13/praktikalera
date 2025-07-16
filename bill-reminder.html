@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Reminder - Praktikal Era</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* --- HIGH-CONTRAST THEME --- */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #111827;
+            --text-muted-color: #4b5563;
+            --card-bg-color: #f9fafb;
+            --card-border-color: #e5e7eb;
+            --header-bg: rgba(255, 255, 255, 0.7);
+            --primary-grad-from: #0d9488;
+            --primary-grad-to: #22d3ee;
+            --danger-color: #ef4444;
+            --warning-color: #f97316;
+            --success-color: #22c55e;
+        }
+        .dark {
+            --bg-color: #020617;
+            --text-color: #f9fafb;
+            --text-muted-color: #9ca3af;
+            --card-bg-color: #111827;
+            --card-border-color: #334155;
+            --header-bg: rgba(2, 6, 23, 0.7);
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .primary-gradient-text {
+            background: linear-gradient(to right, var(--primary-grad-from), var(--primary-grad-to));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .primary-button {
+            background-image: linear-gradient(to right, var(--primary-grad-from), var(--primary-grad-to));
+            color: white;
+        }
+        .glass-header {
+            background-color: var(--header-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--card-border-color);
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--card-border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        .bill-item {
+            border-left-width: 4px;
+            transition: background-color 0.2s;
+        }
+        .bill-item:hover {
+            background-color: rgba(128,128,128,0.05);
+        }
+        .status-overdue { border-color: var(--danger-color); }
+        .status-due-soon { border-color: var(--warning-color); }
+        .status-paid { border-color: var(--success-color); }
+    </style>
+</head>
+<body class="antialiased">
+    
+    <!-- Header -->
+    <header id="main-header" class="w-full sticky top-0 z-40 glass-header">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <svg class="h-8 w-8 primary-gradient-text" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 6v-1.646a4 4 0 00-4-4H6a4 4 0 00-4 4v1.646M12 20v1.646a4 4 0 01-4 4H6a4 4 0 01-4-4V18.354M12 6h3.5A2.5 2.5 0 0118 8.5v.01M12 20h3.5A2.5 2.5 0 0018 17.5v-.01"/></svg>
+                    <span class="text-2xl font-black tracking-tighter">Praktikal Era</span>
+                </a>
+                <div class="flex items-center space-x-3">
+                    <button id="theme-switcher" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+                        <svg id="sun-icon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 12a5 5 0 100-10 5 5 0 000 10z"></path></svg>
+                        <svg id="moon-icon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <header class="text-center mb-8">
+            <h1 class="text-5xl md:text-6xl font-black tracking-tighter mb-4">Bill Reminder</h1>
+            <p class="text-lg" style="color: var(--text-muted-color);">Never miss a due date again.</p>
+        </header>
+
+        <!-- Notification Control -->
+        <div id="notification-banner" class="p-4 rounded-lg mb-8 flex items-center justify-between" style="background-color: var(--card-bg-color); border: 1px solid var(--card-border-color);">
+            <p id="notification-status" class="font-medium">Browser notifications are disabled.</p>
+            <button id="enable-notifications-btn" class="primary-button px-4 py-2 rounded-lg font-bold text-sm">Enable Notifications</button>
+        </div>
+
+        <!-- Add Bill Form -->
+        <div class="p-6 rounded-lg mb-8" style="background-color: var(--card-bg-color); border: 1px solid var(--card-border-color);">
+            <h2 class="text-xl font-bold mb-4">Add New Bill</h2>
+            <form id="bill-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                <div class="lg:col-span-2">
+                    <label for="biller-name" class="text-sm font-medium">Biller Name</label>
+                    <input type="text" id="biller-name" class="form-input mt-1" placeholder="e.g., Meralco, PLDT" required>
+                </div>
+                <div>
+                    <label for="amount" class="text-sm font-medium">Amount (₱)</label>
+                    <input type="number" id="amount" class="form-input mt-1" placeholder="0.00" step="0.01" required>
+                </div>
+                <div>
+                    <label for="due-date" class="text-sm font-medium">Due Date</label>
+                    <input type="date" id="due-date" class="form-input mt-1" required>
+                </div>
+                <div>
+                    <button type="submit" class="primary-button w-full py-3 rounded-lg font-bold">Add Bill</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Bills Display -->
+        <div class="space-y-8">
+            <!-- Overdue Bills -->
+            <div id="overdue-section" class="hidden">
+                <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><svg class="h-6 w-6" style="color: var(--danger-color);" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Overdue</h2>
+                <div id="overdue-list" class="space-y-3"></div>
+            </div>
+            <!-- Upcoming Bills -->
+            <div>
+                <h2 class="text-2xl font-bold mb-4">Upcoming Bills</h2>
+                <div id="upcoming-list" class="space-y-3"></div>
+            </div>
+            <!-- Paid Bills -->
+            <div>
+                <h2 class="text-2xl font-bold mb-4">Paid History</h2>
+                <div id="paid-list" class="space-y-3 opacity-60"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- Theme Switcher Logic ---
+        const themeSwitcher = document.getElementById('theme-switcher');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const applyTheme = (theme) => {
+            if (theme === 'dark') { document.documentElement.classList.add('dark'); sunIcon.classList.add('hidden'); moonIcon.classList.remove('hidden'); } 
+            else { document.documentElement.classList.remove('dark'); sunIcon.classList.remove('hidden'); moonIcon.classList.add('hidden'); }
+        };
+        const currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        applyTheme(currentTheme);
+        themeSwitcher.addEventListener('click', () => {
+            const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        });
+
+        // --- Bill Reminder Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const billForm = document.getElementById('bill-form');
+            const billerNameInput = document.getElementById('biller-name');
+            const amountInput = document.getElementById('amount');
+            const dueDateInput = document.getElementById('due-date');
+            const overdueSection = document.getElementById('overdue-section');
+            const overdueList = document.getElementById('overdue-list');
+            const upcomingList = document.getElementById('upcoming-list');
+            const paidList = document.getElementById('paid-list');
+            const notificationBtn = document.getElementById('enable-notifications-btn');
+            const notificationStatus = document.getElementById('notification-status');
+
+            let bills = JSON.parse(localStorage.getItem('praktikalBills')) || [];
+
+            function saveBills() {
+                localStorage.setItem('praktikalBills', JSON.stringify(bills));
+            }
+            
+            function renderBills() {
+                overdueList.innerHTML = '';
+                upcomingList.innerHTML = '';
+                paidList.innerHTML = '';
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const sortedBills = bills.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+                
+                let hasOverdue = false;
+                let hasUpcoming = false;
+                let hasPaid = false;
+
+                sortedBills.forEach(bill => {
+                    const dueDate = new Date(bill.dueDate);
+                    const isOverdue = !bill.paid && dueDate < today;
+                    
+                    const itemEl = document.createElement('div');
+                    let statusClass = '';
+                    if (bill.paid) {
+                        statusClass = 'status-paid';
+                        hasPaid = true;
+                    } else if (isOverdue) {
+                        statusClass = 'status-overdue';
+                        hasOverdue = true;
+                    } else {
+                        hasUpcoming = true;
+                        const diffTime = Math.abs(dueDate - today);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        if (diffDays <= 3) {
+                            statusClass = 'status-due-soon';
+                        }
+                    }
+
+                    itemEl.className = `bill-item flex justify-between items-center p-4 rounded-md ${statusClass}`;
+                    itemEl.style.backgroundColor = 'var(--card-bg-color)';
+                    
+                    itemEl.innerHTML = `
+                        <div>
+                            <p class="font-bold text-lg">${bill.name}</p>
+                            <p class="text-sm" style="color: var(--text-muted-color);">Due: ${new Date(bill.dueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="font-bold text-xl">₱${parseFloat(bill.amount).toLocaleString('en-PH', {minimumFractionDigits: 2})}</span>
+                            ${!bill.paid ? `<button class="mark-paid-btn p-2 rounded-full hover:bg-green-500/10 text-green-500" data-id="${bill.id}" title="Mark as Paid"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></button>` : ''}
+                            <button class="remove-btn p-2 rounded-full hover:bg-red-500/10 text-red-500" data-id="${bill.id}" title="Delete Bill">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
+                        </div>
+                    `;
+
+                    if (bill.paid) {
+                        paidList.prepend(itemEl);
+                    } else if (isOverdue) {
+                        overdueList.appendChild(itemEl);
+                    } else {
+                        upcomingList.appendChild(itemEl);
+                    }
+                });
+                
+                if (!hasUpcoming) upcomingList.innerHTML = `<p class="text-center p-4" style="color: var(--text-muted-color);">No upcoming bills.</p>`;
+                if (!hasPaid) paidList.innerHTML = `<p class="text-center p-4" style="color: var(--text-muted-color);">No paid bills yet.</p>`;
+                
+                overdueSection.classList.toggle('hidden', !hasOverdue);
+            }
+
+            billForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = billerNameInput.value.trim();
+                const amount = parseFloat(amountInput.value);
+                const dueDate = dueDateInput.value;
+
+                if (!name || isNaN(amount) || !dueDate) {
+                    alert('Please fill out all fields.');
+                    return;
+                }
+
+                const newBill = {
+                    id: Date.now(),
+                    name,
+                    amount,
+                    dueDate,
+                    paid: false,
+                    reminded: false
+                };
+
+                bills.push(newBill);
+                saveBills();
+                renderBills();
+                billForm.reset();
+            });
+
+            document.body.addEventListener('click', (e) => {
+                const removeBtn = e.target.closest('.remove-btn');
+                if (removeBtn) {
+                    const id = parseInt(removeBtn.dataset.id, 10);
+                    bills = bills.filter(b => b.id !== id);
+                    saveBills();
+                    renderBills();
+                }
+
+                const paidBtn = e.target.closest('.mark-paid-btn');
+                if (paidBtn) {
+                    const id = parseInt(paidBtn.dataset.id, 10);
+                    const bill = bills.find(b => b.id === id);
+                    if (bill) {
+                        bill.paid = true;
+                        saveBills();
+                        renderBills();
+                    }
+                }
+            });
+
+            // --- Notification Logic ---
+            function checkNotifications() {
+                if (Notification.permission !== 'granted') return;
+                
+                const today = new Date();
+                today.setHours(0,0,0,0);
+
+                bills.forEach(bill => {
+                    if (!bill.paid && !bill.reminded) {
+                        const dueDate = new Date(bill.dueDate);
+                        const diffTime = dueDate - today;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                        if (diffDays <= 1 && diffDays >= 0) {
+                            new Notification('Praktikal Era: Bill Reminder', {
+                                body: `Your ${bill.name} bill of ₱${bill.amount} is due today or tomorrow!`,
+                                icon: 'https://placehold.co/192x192/0d9488/ffffff?text=PE'
+                            });
+                            bill.reminded = true;
+                        }
+                    }
+                });
+                saveBills();
+            }
+
+            function updateNotificationUI() {
+                if (!("Notification" in window)) {
+                    notificationStatus.textContent = 'This browser does not support notifications.';
+                    notificationBtn.classList.add('hidden');
+                    return;
+                }
+                if (Notification.permission === 'granted') {
+                    notificationStatus.textContent = 'Browser notifications are enabled.';
+                    notificationBtn.textContent = 'Enabled';
+                    notificationBtn.disabled = true;
+                    notificationBtn.classList.add('opacity-50');
+                } else if (Notification.permission === 'denied') {
+                    notificationStatus.textContent = 'Notifications are blocked by your browser.';
+                    notificationBtn.textContent = 'Blocked';
+                    notificationBtn.disabled = true;
+                     notificationBtn.classList.add('opacity-50');
+                }
+            }
+
+            notificationBtn.addEventListener('click', () => {
+                Notification.requestPermission().then(permission => {
+                    updateNotificationUI();
+                    if (permission === 'granted') {
+                        checkNotifications();
+                    }
+                });
+            });
+
+            updateNotificationUI();
+            setInterval(checkNotifications, 1000 * 60 * 60); // Check every hour
+            renderBills();
+        });
+    </script>
+</body>
+</html>
