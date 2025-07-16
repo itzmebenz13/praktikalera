@@ -17,6 +17,8 @@
             --header-bg: rgba(255, 255, 255, 0.7);
             --primary-grad-from: #0d9488;
             --primary-grad-to: #22d3ee;
+            --earning-color: #22c55e;
+            --spending-color: #ef4444;
         }
         .dark {
             --bg-color: #020617;
@@ -25,6 +27,8 @@
             --card-bg-color: #111827;
             --card-border-color: #334155;
             --header-bg: rgba(2, 6, 23, 0.7);
+            --earning-color: #4ade80;
+            --spending-color: #f87171;
         }
         body {
             font-family: 'Poppins', sans-serif;
@@ -39,11 +43,8 @@
         }
         .primary-button {
             background-image: linear-gradient(to right, var(--primary-grad-from), var(--primary-grad-to));
-            background-size: 200% auto;
             color: white;
-            transition: background-position 0.5s ease;
         }
-        .primary-button:hover:not(:disabled) { background-position: right center; }
         .glass-header {
             background-color: var(--header-bg);
             backdrop-filter: blur(16px);
@@ -81,65 +82,32 @@
             border: 1px solid var(--card-border-color);
             border-radius: 0.75rem;
         }
-        .bank-icon {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-            flex-shrink: 0;
-        }
         .bank-name {
             font-weight: 600;
             flex-grow: 1;
         }
-        .balance-input-wrapper {
-            display: flex;
-            align-items: center;
-            border: 1px solid var(--card-border-color);
-            border-radius: 0.5rem;
-            background-color: var(--bg-color);
-        }
-        .balance-input {
-            width: 120px;
-            padding: 0.5rem 0.75rem;
-            border: none;
-            background-color: transparent;
-            color: var(--text-color);
-            font-size: 1rem;
+        .bank-balance {
+            font-size: 1.125rem;
+            font-weight: 700;
             text-align: right;
-            -moz-appearance: textfield;
         }
-        .balance-input::-webkit-outer-spin-button,
-        .balance-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        .currency-symbol {
-            padding-left: 0.75rem;
-            font-weight: 600;
-            color: var(--text-muted-color);
-        }
-        .adjust-btn {
-            padding: 0.5rem;
-            background-color: transparent;
-            border: none;
-            color: var(--text-muted-color);
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .adjust-btn:hover {
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--card-border-color);
+            background-color: var(--bg-color);
             color: var(--text-color);
         }
-        
-        /* Modal Styles */
-        .modal-overlay {
-            background-color: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+        .transaction-list-item {
+            border-left-width: 4px;
+            transition: background-color 0.2s;
         }
-        .modal-card {
-            background-color: var(--card-bg-color);
-            border: 1px solid var(--card-border-color);
+        .transaction-list-item:hover {
+            background-color: rgba(128,128,128,0.05);
         }
+        .earning { border-color: var(--earning-color); }
+        .spending { border-color: var(--spending-color); }
     </style>
 </head>
 <body class="antialiased">
@@ -174,28 +142,45 @@
             <p id="total-worth-amount" class="total-worth-amount">₱0.00</p>
         </div>
 
-        <!-- Bank Entries -->
-        <div id="bank-list" class="flex flex-col gap-4">
-            <!-- Bank entries will be dynamically inserted here -->
-        </div>
-    </main>
-
-    <!-- Adjustment Modal -->
-    <div id="adjustment-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
-        <div class="modal-card w-full max-w-sm p-6 rounded-xl shadow-lg">
-            <h2 id="modal-title" class="text-xl font-bold mb-4">Adjust Balance</h2>
-            <div class="space-y-4">
-                <div>
-                    <label for="adjustment-amount" class="text-sm font-medium">Amount</label>
-                    <input type="number" id="adjustment-amount" class="form-input mt-1 w-full" placeholder="0.00" step="0.01">
+        <!-- Add Transaction Form -->
+        <div class="p-6 rounded-lg mb-8" style="background-color: var(--card-bg-color); border: 1px solid var(--card-border-color);">
+            <h2 class="text-xl font-bold mb-4">Add New Transaction</h2>
+            <form id="transaction-form" class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+                <div class="md:col-span-2">
+                    <label for="description" class="text-sm font-medium">Description</label>
+                    <input type="text" id="description" class="form-input mt-1" placeholder="e.g., Salary, Commission" required>
                 </div>
-                <div class="flex gap-4">
-                    <button id="cancel-btn" class="w-full py-2 rounded-lg font-bold" style="background-color: var(--card-border-color);">Cancel</button>
-                    <button id="confirm-btn" class="primary-button w-full py-2 rounded-lg font-bold">Confirm</button>
+                <div>
+                    <label for="amount" class="text-sm font-medium">Amount (₱)</label>
+                    <input type="number" id="amount" class="form-input mt-1" placeholder="0.00" step="0.01" required>
+                </div>
+                <div class="md:col-span-2">
+                    <label for="bank-select" class="text-sm font-medium">Account</label>
+                    <select id="bank-select" class="form-input mt-1"></select>
+                </div>
+                <div>
+                    <button type="submit" id="add-transaction-btn" class="primary-button w-full py-3 rounded-lg font-bold">Add</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Balances Section -->
+            <div class="md:col-span-1 space-y-4">
+                <h2 class="text-xl font-bold">Account Balances</h2>
+                <div id="bank-list" class="flex flex-col gap-4">
+                    <!-- Bank balances will be dynamically inserted here -->
+                </div>
+            </div>
+            <!-- Transaction History -->
+            <div class="md:col-span-2">
+                <h2 class="text-xl font-bold mb-4">Transaction History</h2>
+                <div id="transaction-list" class="space-y-3">
+                    <!-- Transactions will be injected here -->
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <script>
         // --- Theme Switcher Logic ---
@@ -222,122 +207,144 @@
         });
 
         // --- Money Saver Logic ---
-        const banks = [
-            { id: 'gcash', name: 'GCash', icon: 'https://www.gcash.com/wp-content/uploads/2023/07/GCash-Logo-1.png' },
-            { id: 'maya', name: 'Maya', icon: 'https://www.maya.ph/icon.svg' },
-            { id: 'bpi', name: 'BPI', icon: 'https://www.bpi.com.ph/content/dam/bpi/bpi-logo-288x288.png' },
-            { id: 'bdo', name: 'BDO', icon: 'https://www.bdo.com.ph/sites/default/files/images/logo.png' },
-            { id: 'seabank', name: 'SeaBank', icon: 'https://www.seabank.co.id/logo-seabank.png' },
-            { id: 'metrobank', name: 'Metrobank', icon: 'https://www.metrobank.com.ph/img/metrobank-logo-alt.png' },
-            { id: 'unionbank', name: 'UnionBank', icon: 'https://www.unionbankph.com/images/default-source/default-album/logo.png' },
-            { id: 'landbank', name: 'Landbank', icon: 'https://www.landbank.com/images/logo-landbank.png' },
-            { id: 'securitybank', name: 'Security Bank', icon: 'https://www.securitybank.com/wp-content/uploads/2022/09/sb-logo-deva.png' },
-            { id: 'rcbc', name: 'RCBC', icon: 'https://www.rcbc.com/uploads/media/rcbc-logo-1.png' },
-            { id: 'gotyme', name: 'GoTyme Bank', icon: 'https://www.gotyme.com.ph/GoTyme-Bank-Logo.png' },
-            { id: 'coinsph', name: 'Coins.ph', icon: 'https://coins.ph/src/images/coins-logo-300x300.png' },
-            { id: 'grabpay', name: 'GrabPay', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Grab_logo.svg/2560px-Grab_logo.svg.png' }
-        ];
+        document.addEventListener('DOMContentLoaded', () => {
+            const banks = [
+                { id: 'gcash', name: 'GCash' },
+                { id: 'maya', name: 'Maya' },
+                { id: 'bpi', name: 'BPI' },
+                { id: 'bdo', name: 'BDO' },
+                { id: 'seabank', name: 'SeaBank' },
+                { id: 'metrobank', name: 'Metrobank' },
+                { id: 'unionbank', name: 'UnionBank' },
+                { id: 'landbank', name: 'Landbank' },
+                { id: 'securitybank', name: 'Security Bank' },
+                { id: 'rcbc', name: 'RCBC' },
+                { id: 'gotyme', name: 'GoTyme Bank' },
+                { id: 'coinsph', name: 'Coins.ph' },
+                { id: 'grabpay', name: 'GrabPay' }
+            ];
 
-        const bankListContainer = document.getElementById('bank-list');
-        const totalWorthAmountEl = document.getElementById('total-worth-amount');
-        const modal = document.getElementById('adjustment-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const adjustmentAmountInput = document.getElementById('adjustment-amount');
-        const cancelBtn = document.getElementById('cancel-btn');
-        const confirmBtn = document.getElementById('confirm-btn');
+            const transactionForm = document.getElementById('transaction-form');
+            const descriptionInput = document.getElementById('description');
+            const amountInput = document.getElementById('amount');
+            const bankSelect = document.getElementById('bank-select');
+            const transactionList = document.getElementById('transaction-list');
+            const totalWorthAmountEl = document.getElementById('total-worth-amount');
+            const bankListContainer = document.getElementById('bank-list');
 
-        let balances = JSON.parse(localStorage.getItem('praktikalBalances')) || {};
+            let transactions = JSON.parse(localStorage.getItem('praktikalTransactions_v2')) || [];
 
-        function saveBalances() {
-            localStorage.setItem('praktikalBalances', JSON.stringify(balances));
-        }
-
-        const calculateTotal = () => {
-            const total = Object.values(balances).reduce((sum, val) => sum + val, 0);
-            totalWorthAmountEl.textContent = `₱${total.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        };
-
-        function openModal(bankId, type) {
-            modal.classList.remove('hidden');
-            modal.dataset.bankId = bankId;
-            modal.dataset.type = type;
-            modalTitle.textContent = `${type === 'add' ? 'Add to' : 'Subtract from'} ${banks.find(b => b.id === bankId).name}`;
-            adjustmentAmountInput.value = '';
-            adjustmentAmountInput.focus();
-        }
-
-        function closeModal() {
-            modal.classList.add('hidden');
-        }
-
-        confirmBtn.addEventListener('click', () => {
-            const amount = parseFloat(adjustmentAmountInput.value);
-            const bankId = modal.dataset.bankId;
-            const type = modal.dataset.type;
-
-            if (!isNaN(amount) && amount > 0) {
-                const currentBalance = balances[bankId] || 0;
-                balances[bankId] = type === 'add' ? currentBalance + amount : currentBalance - amount;
-                
-                const inputEl = document.querySelector(`.balance-input[data-bank-id="${bankId}"]`);
-                inputEl.value = balances[bankId].toFixed(2);
-                
-                saveBalances();
-                calculateTotal();
-                closeModal();
-            } else {
-                alert('Please enter a valid positive amount.');
-            }
-        });
-
-        cancelBtn.addEventListener('click', closeModal);
-
-        banks.forEach(bank => {
-            if (!balances[bank.id]) {
-                balances[bank.id] = 0;
+            function saveTransactions() {
+                localStorage.setItem('praktikalTransactions_v2', JSON.stringify(transactions));
             }
 
-            const entryDiv = document.createElement('div');
-            entryDiv.className = 'bank-entry';
-            entryDiv.innerHTML = `
-                <img src="${bank.icon}" alt="${bank.name} Logo" class="bank-icon" onerror="this.style.display='none';">
-                <span class="bank-name">${bank.name}</span>
-                <div class="balance-input-wrapper">
-                    <span class="currency-symbol">₱</span>
-                    <input type="number" class="balance-input" placeholder="0.00" step="0.01" data-bank-id="${bank.id}" value="${balances[bank.id].toFixed(2)}">
-                </div>
-                <div class="flex">
-                    <button class="adjust-btn add-btn" data-bank-id="${bank.id}">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                    </button>
-                    <button class="adjust-btn minus-btn" data-bank-id="${bank.id}">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6"/></svg>
-                    </button>
-                </div>
-            `;
-            bankListContainer.appendChild(entryDiv);
-        });
+            function populateBankSelect() {
+                banks.forEach(bank => {
+                    const option = document.createElement('option');
+                    option.value = bank.id;
+                    option.textContent = bank.name;
+                    bankSelect.appendChild(option);
+                });
+            }
 
-        document.querySelectorAll('.balance-input').forEach(input => {
-            input.addEventListener('change', (e) => {
-                const bankId = e.target.dataset.bankId;
-                const value = parseFloat(e.target.value);
-                balances[bankId] = isNaN(value) ? 0 : value;
-                e.target.value = balances[bankId].toFixed(2);
-                saveBalances();
-                calculateTotal();
+            function renderAll() {
+                const balances = {};
+                banks.forEach(b => balances[b.id] = 0);
+
+                transactions.forEach(t => {
+                    if (t.type === 'earning') {
+                        balances[t.bankId] += t.amount;
+                    } else {
+                        balances[t.bankId] -= t.amount;
+                    }
+                });
+                
+                // Render Bank Balances
+                bankListContainer.innerHTML = '';
+                banks.forEach(bank => {
+                    const balance = balances[bank.id] || 0;
+                    const entryDiv = document.createElement('div');
+                    entryDiv.className = 'bank-entry';
+                    entryDiv.innerHTML = `
+                        <span class="bank-name">${bank.name}</span>
+                        <span class="bank-balance">₱${balance.toLocaleString('en-PH', {minimumFractionDigits: 2})}</span>
+                    `;
+                    bankListContainer.appendChild(entryDiv);
+                });
+
+                // Render Transaction History
+                transactionList.innerHTML = '';
+                if (transactions.length === 0) {
+                    transactionList.innerHTML = `<p class="text-center p-4" style="color: var(--text-muted-color);">No transactions yet.</p>`;
+                } else {
+                    transactions.slice().reverse().forEach(t => {
+                        const itemEl = document.createElement('div');
+                        const sign = t.type === 'earning' ? '+' : '-';
+                        const colorClass = t.type === 'earning' ? 'earning' : 'spending';
+                        const textColor = t.type === 'earning' ? 'var(--earning-color)' : 'var(--spending-color)';
+
+                        itemEl.className = `transaction-list-item flex justify-between items-center p-4 rounded-md ${colorClass}`;
+                        itemEl.style.backgroundColor = 'var(--card-bg-color)';
+                        
+                        itemEl.innerHTML = `
+                            <div>
+                                <p class="font-bold">${t.description}</p>
+                                <p class="text-xs" style="color: var(--text-muted-color);">${banks.find(b => b.id === t.bankId).name} - ${new Date(t.id).toLocaleDateString()}</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="font-bold text-lg" style="color: ${textColor};">${sign}₱${Math.abs(t.amount).toLocaleString('en-PH', {minimumFractionDigits: 2})}</span>
+                                <button class="remove-btn p-1 rounded-full hover:bg-red-500/20 text-red-500" data-id="${t.id}">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                            </div>
+                        `;
+                        transactionList.appendChild(itemEl);
+                    });
+                }
+                
+                // Update Total Net Worth
+                const totalNetWorth = Object.values(balances).reduce((sum, val) => sum + val, 0);
+                totalWorthAmountEl.textContent = `₱${totalNetWorth.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            }
+
+            transactionForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const type = e.submitter.id === 'add-spending-btn' ? 'spending' : 'earning';
+                const description = descriptionInput.value;
+                const amount = parseFloat(amountInput.value);
+                const bankId = bankSelect.value;
+
+                if (description.trim() === '' || isNaN(amount) || amount <= 0) {
+                    alert('Please enter a valid description and amount.');
+                    return;
+                }
+
+                const transaction = {
+                    id: new Date().getTime(),
+                    description,
+                    amount,
+                    type,
+                    bankId
+                };
+
+                transactions.push(transaction);
+                saveTransactions();
+                renderAll();
+                transactionForm.reset();
             });
-        });
 
-        document.querySelectorAll('.add-btn').forEach(btn => {
-            btn.addEventListener('click', () => openModal(btn.dataset.bankId, 'add'));
-        });
+            transactionList.addEventListener('click', (e) => {
+                if (e.target.closest('.remove-btn')) {
+                    const id = e.target.closest('.remove-btn').dataset.id;
+                    transactions = transactions.filter(t => t.id != id);
+                    saveTransactions();
+                    renderAll();
+                }
+            });
 
-        document.querySelectorAll('.minus-btn').forEach(btn => {
-            btn.addEventListener('click', () => openModal(btn.dataset.bankId, 'subtract'));
+            populateBankSelect();
+            renderAll();
         });
-
-        calculateTotal();
     </script>
 </body>
 </html>
