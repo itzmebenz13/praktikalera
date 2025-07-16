@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Praktikal Era</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-color: #ffffff; --text-color: #111827; --text-muted-color: #4b5563;
+            --card-bg-color: #f9fafb; --card-border-color: #e5e7eb; --header-bg: rgba(255, 255, 255, 0.7);
+            --primary-grad-from: #0d9488; --primary-grad-to: #22d3ee;
+        }
+        .dark {
+            --bg-color: #020617; --text-color: #f9fafb; --text-muted-color: #9ca3af;
+            --card-bg-color: #111827; --card-border-color: #334155; --header-bg: rgba(2, 6, 23, 0.7);
+        }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: background-color 0.3s, color 0.3s; }
+        .primary-button { background-image: linear-gradient(to right, var(--primary-grad-from), var(--primary-grad-to)); background-size: 200% auto; color: white; transition: background-position 0.5s ease; }
+        .primary-button:hover { background-position: right center; }
+        .payment-option {
+            border: 1px solid var(--card-border-color);
+            transition: all 0.2s ease-in-out;
+        }
+        .payment-option.selected {
+            border-color: var(--primary-grad-to);
+            box-shadow: 0 0 0 2px var(--primary-grad-to);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-lg">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-black tracking-tight">Payment</h1>
+            <p class="mt-2 text-lg" style="color: var(--text-muted-color);">Choose your payment method.</p>
+        </header>
+
+        <div class="p-8 rounded-2xl" style="background-color: var(--card-bg-color); border: 1px solid var(--card-border-color);">
+            <div class="space-y-4">
+                <!-- Payment Options -->
+                <div id="payment-options">
+                    <div class="payment-option p-4 rounded-lg flex items-center gap-4 cursor-pointer">
+                        <input type="radio" name="payment-method" id="card" class="h-4 w-4" checked>
+                        <label for="card" class="flex-grow font-semibold">Credit/Debit Card</label>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" class="h-6" alt="Mastercard">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" class="h-4" alt="Visa">
+                    </div>
+                    <div class="payment-option p-4 rounded-lg flex items-center gap-4 cursor-pointer mt-4">
+                        <input type="radio" name="payment-method" id="gcash" class="h-4 w-4">
+                        <label for="gcash" class="flex-grow font-semibold">GCash</label>
+                        <img src="https://www.gcash.com/wp-content/uploads/2023/07/GCash-Logo-1.png" class="h-6" alt="GCash">
+                    </div>
+                    <div class="payment-option p-4 rounded-lg flex items-center gap-4 cursor-pointer mt-4">
+                        <input type="radio" name="payment-method" id="maya" class="h-4 w-4">
+                        <label for="maya" class="flex-grow font-semibold">Maya</label>
+                        <img src="https://www.maya.ph/icon.svg" class="h-8" alt="Maya">
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8">
+                <a href="order-confirmation.html" class="primary-button w-full py-3 rounded-lg font-bold text-center block">Pay <span id="total-payment-amount">₱50.00</span></a>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+              document.documentElement.classList.add('dark');
+            }
+            const cart = JSON.parse(localStorage.getItem('praktikalCart')) || [];
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = cart.length > 0 ? 50.00 : 0;
+            const total = subtotal + shipping;
+            document.getElementById('total-payment-amount').textContent = `₱${total.toFixed(2)}`;
+
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    paymentOptions.forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+                    option.querySelector('input[type="radio"]').checked = true;
+                });
+            });
+            // Select the first one by default
+            if(paymentOptions.length > 0) paymentOptions[0].classList.add('selected');
+        });
+    </script>
+</body>
+</html>
