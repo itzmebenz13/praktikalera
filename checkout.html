@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Praktikal Era</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-color: #ffffff; --text-color: #111827; --text-muted-color: #4b5563;
+            --card-bg-color: #f9fafb; --card-border-color: #e5e7eb; --header-bg: rgba(255, 255, 255, 0.7);
+            --primary-grad-from: #0d9488; --primary-grad-to: #22d3ee;
+        }
+        .dark {
+            --bg-color: #020617; --text-color: #f9fafb; --text-muted-color: #9ca3af;
+            --card-bg-color: #111827; --card-border-color: #334155; --header-bg: rgba(2, 6, 23, 0.7);
+        }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: background-color 0.3s, color 0.3s; }
+        .primary-button { background-image: linear-gradient(to right, var(--primary-grad-from), var(--primary-grad-to)); background-size: 200% auto; color: white; transition: background-position 0.5s ease; }
+        .primary-button:hover { background-position: right center; }
+        .form-input {
+            width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; border: 1px solid var(--card-border-color);
+            background-color: var(--bg-color); color: var(--text-color); font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-grad-to);
+            box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.3);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-4xl">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-black tracking-tight">Checkout</h1>
+            <p class="mt-2 text-lg" style="color: var(--text-muted-color);">Please enter your shipping details.</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+            <!-- Shipping Form -->
+            <div class="md:col-span-2 p-8 rounded-2xl" style="background-color: var(--card-bg-color); border: 1px solid var(--card-border-color);">
+                <form action="payment.html" method="GET">
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-xl font-bold mb-4">Contact Information</h3>
+                            <div>
+                                <label for="email" class="block text-sm font-medium mb-1">Email Address</label>
+                                <input type="email" id="email" class="form-input" required>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold mb-4">Shipping Address</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="first-name" class="block text-sm font-medium mb-1">First Name</label>
+                                    <input type="text" id="first-name" class="form-input" required>
+                                </div>
+                                <div>
+                                    <label for="last-name" class="block text-sm font-medium mb-1">Last Name</label>
+                                    <input type="text" id="last-name" class="form-input" required>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <label for="address" class="block text-sm font-medium mb-1">Address</label>
+                                <input type="text" id="address" class="form-input" required>
+                            </div>
+                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                                <div>
+                                    <label for="city" class="block text-sm font-medium mb-1">City</label>
+                                    <input type="text" id="city" class="form-input" required>
+                                </div>
+                                <div>
+                                    <label for="province" class="block text-sm font-medium mb-1">Province</label>
+                                    <input type="text" id="province" class="form-input" required>
+                                </div>
+                                <div>
+                                    <label for="zip-code" class="block text-sm font-medium mb-1">Zip Code</label>
+                                    <input type="text" id="zip-code" class="form-input" required>
+                                </div>
+                            </div>
+                             <div class="mt-4">
+                                <label for="phone" class="block text-sm font-medium mb-1">Phone Number</label>
+                                <input type="tel" id="phone" class="form-input" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <button type="submit" class="primary-button w-full py-3 rounded-lg font-bold">Continue to Payment</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="md:col-span-1 sticky top-8">
+                 <div class="p-6 rounded-lg" style="background-color: var(--card-bg-color); border: 1px solid var(--card-border-color);">
+                    <h2 class="text-xl font-bold border-b pb-4" style="border-color: var(--card-border-color);">Order Summary</h2>
+                    <div id="summary-items" class="space-y-4 py-4 max-h-64 overflow-y-auto">
+                        <!-- Summary items will be injected here by JS -->
+                    </div>
+                    <div class="space-y-2 py-4 border-t" style="border-color: var(--card-border-color);">
+                        <div class="flex justify-between">
+                            <span style="color: var(--text-muted-color);">Subtotal</span>
+                            <span id="summary-subtotal" class="font-semibold">₱0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span style="color: var(--text-muted-color);">Shipping</span>
+                            <span id="summary-shipping" class="font-semibold">₱50.00</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between font-bold text-lg border-t pt-4" style="border-color: var(--card-border-color);">
+                        <span>Total</span>
+                        <span id="summary-total">₱50.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+              document.documentElement.classList.add('dark');
+            }
+            const cart = JSON.parse(localStorage.getItem('praktikalCart')) || [];
+            const summaryItemsEl = document.getElementById('summary-items');
+            const subtotalEl = document.getElementById('summary-subtotal');
+            const shippingEl = document.getElementById('summary-shipping');
+            const totalEl = document.getElementById('summary-total');
+
+            if (cart.length > 0) {
+                cart.forEach(item => {
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'flex items-center gap-4';
+                    itemEl.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-md">
+                        <div class="flex-grow">
+                            <p class="font-semibold">${item.name}</p>
+                            <p class="text-sm" style="color: var(--text-muted-color);">Qty: ${item.quantity}</p>
+                        </div>
+                        <p class="font-semibold">₱${(item.price * item.quantity).toFixed(2)}</p>
+                    `;
+                    summaryItemsEl.appendChild(itemEl);
+                });
+            } else {
+                summaryItemsEl.innerHTML = `<p class="text-sm text-center" style="color: var(--text-muted-color);">Your cart is empty.</p>`;
+            }
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = cart.length > 0 ? 50.00 : 0;
+            const total = subtotal + shipping;
+
+            subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
+            shippingEl.textContent = `₱${shipping.toFixed(2)}`;
+            totalEl.textContent = `₱${total.toFixed(2)}`;
+        });
+    </script>
+</body>
+</html>
