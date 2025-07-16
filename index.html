@@ -144,7 +144,7 @@
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                         <span id="wishlist-badge" class="absolute top-1 right-1 block h-2 w-2 transform translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500 hidden"></span>
                     </a>
-                     <a href="#" class="relative p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+                     <a href="cart.html" class="relative p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                         <span id="cart-badge" class="absolute top-1 right-1 text-xs font-bold w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center hidden">0</span>
                     </a>
@@ -407,7 +407,7 @@
         const countdownContainer = document.getElementById("countdown-container");
         if (countdownContainer) {
             const countDownDate = new Date();
-            countDownDate.setDate(countDownDate.getDate() + 7); // Set expiry 7 days from now
+            countDownDate.setDate(countDownDate.getDate() + 7);
 
             const redeemBtn = document.getElementById("redeem-button");
 
@@ -439,7 +439,17 @@
         const wishlistBadge = document.getElementById('wishlist-badge');
         const cartBadge = document.getElementById('cart-badge');
         let wishlistCount = 0;
-        let cartCount = 0;
+        let cart = JSON.parse(localStorage.getItem('praktikalCart')) || [];
+
+        function updateCartBadge() {
+            const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (cartCount > 0) {
+                cartBadge.textContent = cartCount;
+                cartBadge.classList.remove('hidden');
+            } else {
+                cartBadge.classList.add('hidden');
+            }
+        }
 
         document.querySelectorAll('.wishlist-heart').forEach(button => {
             button.addEventListener('click', (e) => {
@@ -451,15 +461,36 @@
             });
         });
 
-        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                cartCount++;
-                cartBadge.textContent = cartCount;
-                cartBadge.classList.remove('hidden');
-            });
+        document.querySelectorAll('.deal-card').forEach(card => {
+            const addToCartBtn = card.querySelector('.add-to-cart-btn');
+            if (addToCartBtn) {
+                addToCartBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const product = {
+                        id: card.querySelector('h3').textContent,
+                        name: card.querySelector('h3').textContent,
+                        store: card.querySelector('p:nth-of-type(1)').textContent,
+                        price: parseFloat(card.querySelector('p:nth-of-type(2)').textContent.replace('₱', '')),
+                        image: card.querySelector('img').src,
+                        quantity: 1
+                    };
+
+                    const existingItem = cart.find(item => item.id === product.id);
+                    if (existingItem) {
+                        existingItem.quantity++;
+                    } else {
+                        cart.push(product);
+                    }
+
+                    localStorage.setItem('praktikalCart', JSON.stringify(cart));
+                    updateCartBadge();
+                });
+            }
         });
+
+        updateCartBadge();
     </script>
 </body>
 </html>
