@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Monitor - Praktikal Era</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* --- HIGH-CONTRAST THEME --- */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #111827;
+            --text-muted-color: #4b5563;
+            --card-bg-color: #f9fafb;
+            --card-border-color: #e5e7eb;
+            --header-bg: rgba(255, 255, 255, 0.7);
+            --primary-grad-from: #0d9488;
+            --primary-grad-to: #22d3ee;
+            --earning-color: #22c55e;
+            --spending-color: #ef4444;
+        }
+        .dark {
+            --bg-color: #020617;
+            --text-color: #f9fafb;
+            --text-muted-color: #9ca3af;
+            --card-bg-color: #111827;
+            --card-border-color: #334155;
+            --header-bg: rgba(2, 6, 23, 0.7);
+            --earning-color: #4ade80;
+            --spending-color: #f87171;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .primary-gradient-text {
+            background: linear-gradient(to right, var(--primary-grad-from), var(--primary-grad-to));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .primary-button {
+            background-image: linear-gradient(to right, var(--primary-grad-from), var(--primary-grad-to));
+            color: white;
+        }
+        .glass-header {
+            background-color: var(--header-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--card-border-color);
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--card-border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        .transaction-list-item {
+            border-left-width: 4px;
+            transition: background-color 0.2s;
+        }
+        .transaction-list-item:hover {
+            background-color: rgba(128,128,128,0.1);
+        }
+        .earning { border-color: var(--earning-color); }
+        .spending { border-color: var(--spending-color); }
+    </style>
+</head>
+<body class="antialiased">
+    
+    <!-- Header -->
+    <header id="main-header" class="w-full sticky top-0 z-50 glass-header">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <svg class="h-8 w-8 primary-gradient-text" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 6v-1.646a4 4 0 00-4-4H6a4 4 0 00-4 4v1.646M12 20v1.646a4 4 0 01-4 4H6a4 4 0 01-4-4V18.354M12 6h3.5A2.5 2.5 0 0118 8.5v.01M12 20h3.5A2.5 2.5 0 0018 17.5v-.01"/></svg>
+                    <span class="text-2xl font-black tracking-tighter">Praktikal Era</span>
+                </a>
+                <div class="flex items-center space-x-3">
+                    <button id="theme-switcher" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+                        <svg id="sun-icon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 12a5 5 0 100-10 5 5 0 000 10z"></path></svg>
+                        <svg id="moon-icon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <header class="text-center mb-8">
+            <h1 class="text-5xl md:text-6xl font-black tracking-tighter mb-4">Money Monitor</h1>
+            <p class="text-lg" style="color: var(--text-muted-color);">Track your earnings and spendings with ease.</p>
+        </header>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="p-4 rounded-lg" style="background-color: var(--card-bg-color); border: 1px solid var(--card-border-color);">
+                <p class="text-sm font-medium" style="color: var(--text-muted-color);">Total Earnings</p>
+                <p id="total-earnings" class="text-2xl font-bold" style="color: var(--earning-color);">₱0.00</p>
+            </div>
+            <div class="p-4 rounded-lg" style="background-color: var(--card-bg-color); border: 1px solid var(--card-border-color);">
+                <p class="text-sm font-medium" style="color: var(--text-muted-color);">Total Spendings</p>
+                <p id="total-spendings" class="text-2xl font-bold" style="color: var(--spending-color);">₱0.00</p>
+            </div>
+            <div class="p-4 rounded-lg" style="background-color: var(--card-bg-color); border: 1px solid var(--card-border-color);">
+                <p class="text-sm font-medium" style="color: var(--text-muted-color);">Current Balance</p>
+                <p id="current-balance" class="text-2xl font-bold">₱0.00</p>
+            </div>
+        </div>
+
+        <!-- Add Transaction Form -->
+        <div class="p-6 rounded-lg mb-8" style="background-color: var(--card-bg-color); border: 1px solid var(--card-border-color);">
+            <h2 class="text-xl font-bold mb-4">Add New Transaction</h2>
+            <form id="transaction-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div class="md:col-span-2">
+                    <label for="description" class="text-sm font-medium">Description</label>
+                    <input type="text" id="description" class="form-input mt-1" placeholder="e.g., Salary, Groceries" required>
+                </div>
+                <div>
+                    <label for="amount" class="text-sm font-medium">Amount (₱)</label>
+                    <input type="number" id="amount" class="form-input mt-1" placeholder="0.00" step="0.01" required>
+                </div>
+                <div class="flex gap-4">
+                    <button type="submit" name="type" value="earning" class="w-full py-3 rounded-lg font-bold text-white" style="background-color: var(--earning-color);">+ Add Earning</button>
+                    <button type="submit" name="type" value="spending" class="w-full py-3 rounded-lg font-bold text-white" style="background-color: var(--spending-color);">- Add Spending</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Transaction History -->
+        <div>
+            <h2 class="text-xl font-bold mb-4">Transaction History</h2>
+            <div id="transaction-list" class="space-y-3">
+                <!-- Transactions will be injected here -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- Theme Switcher Logic ---
+        const themeSwitcher = document.getElementById('theme-switcher');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            }
+        };
+        const currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        applyTheme(currentTheme);
+        themeSwitcher.addEventListener('click', () => {
+            const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        });
+
+        // --- Money Monitor Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const transactionForm = document.getElementById('transaction-form');
+            const descriptionInput = document.getElementById('description');
+            const amountInput = document.getElementById('amount');
+            const transactionList = document.getElementById('transaction-list');
+            const totalEarningsEl = document.getElementById('total-earnings');
+            const totalSpendingsEl = document.getElementById('total-spendings');
+            const currentBalanceEl = document.getElementById('current-balance');
+
+            let transactions = JSON.parse(localStorage.getItem('praktikalTransactions')) || [];
+
+            function saveTransactions() {
+                localStorage.setItem('praktikalTransactions', JSON.stringify(transactions));
+            }
+
+            function renderTransactions() {
+                transactionList.innerHTML = '';
+                if (transactions.length === 0) {
+                    transactionList.innerHTML = `<p class="text-center p-4" style="color: var(--text-muted-color);">No transactions yet.</p>`;
+                } else {
+                    transactions.slice().reverse().forEach(t => {
+                        const itemEl = document.createElement('div');
+                        const sign = t.type === 'earning' ? '+' : '-';
+                        const colorClass = t.type === 'earning' ? 'earning' : 'spending';
+                        const textColor = t.type === 'earning' ? 'var(--earning-color)' : 'var(--spending-color)';
+
+                        itemEl.className = `transaction-list-item flex justify-between items-center p-4 rounded-md ${colorClass}`;
+                        itemEl.style.backgroundColor = 'var(--card-bg-color)';
+                        
+                        itemEl.innerHTML = `
+                            <div>
+                                <p class="font-bold">${t.description}</p>
+                                <p class="text-xs" style="color: var(--text-muted-color);">${new Date(t.id).toLocaleString()}</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="font-bold text-lg" style="color: ${textColor};">${sign}₱${Math.abs(t.amount).toLocaleString('en-PH', {minimumFractionDigits: 2})}</span>
+                                <button class="remove-btn p-1 rounded-full hover:bg-red-500/20 text-red-500" data-id="${t.id}">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                            </div>
+                        `;
+                        transactionList.appendChild(itemEl);
+                    });
+                }
+                updateSummary();
+            }
+
+            function updateSummary() {
+                const earnings = transactions.filter(t => t.type === 'earning').reduce((sum, t) => sum + t.amount, 0);
+                const spendings = transactions.filter(t => t.type === 'spending').reduce((sum, t) => sum + t.amount, 0);
+                const balance = earnings - spendings;
+
+                totalEarningsEl.textContent = `₱${earnings.toLocaleString('en-PH', {minimumFractionDigits: 2})}`;
+                totalSpendingsEl.textContent = `₱${spendings.toLocaleString('en-PH', {minimumFractionDigits: 2})}`;
+                currentBalanceEl.textContent = `₱${balance.toLocaleString('en-PH', {minimumFractionDigits: 2})}`;
+            }
+
+            transactionForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const type = e.submitter.value;
+                const description = descriptionInput.value;
+                const amount = parseFloat(amountInput.value);
+
+                if (description.trim() === '' || isNaN(amount) || amount <= 0) {
+                    alert('Please enter a valid description and amount.');
+                    return;
+                }
+
+                const transaction = {
+                    id: new Date().getTime(),
+                    description,
+                    amount,
+                    type
+                };
+
+                transactions.push(transaction);
+                saveTransactions();
+                renderTransactions();
+                
+                transactionForm.reset();
+            });
+
+            transactionList.addEventListener('click', (e) => {
+                if (e.target.closest('.remove-btn')) {
+                    const id = e.target.closest('.remove-btn').dataset.id;
+                    transactions = transactions.filter(t => t.id != id);
+                    saveTransactions();
+                    renderTransactions();
+                }
+            });
+
+            renderTransactions();
+        });
+    </script>
+</body>
+</html>
