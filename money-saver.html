@@ -15,34 +15,35 @@
             --card-bg-color: #f9fafb;
             --card-border-color: #e5e7eb;
             --header-bg: rgba(255, 255, 255, 0.7);
-            /* Cool "Glacial Mint" Gradient */
-            --primary-grad-from: #0d9488; /* Teal */
-            --primary-grad-to: #22d3ee;   /* Cyan */
+            --primary-grad-from: #0d9488;
+            --primary-grad-to: #22d3ee;
         }
-
         .dark {
-            --bg-color: #020617; /* Near-black for high contrast */
+            --bg-color: #020617;
             --text-color: #f9fafb;
             --text-muted-color: #9ca3af;
             --card-bg-color: #111827;
             --card-border-color: #334155;
             --header-bg: rgba(2, 6, 23, 0.7);
         }
-
         body {
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             transition: background-color 0.3s, color 0.3s;
         }
-
-        /* --- UI/UX ENHANCEMENTS --- */
         .primary-gradient-text {
             background: linear-gradient(to right, var(--primary-grad-from), var(--primary-grad-to));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
+        .primary-button {
+            background-image: linear-gradient(to right, var(--primary-grad-from), var(--primary-grad-to));
+            background-size: 200% auto;
+            color: white;
+            transition: background-position 0.5s ease;
+        }
+        .primary-button:hover:not(:disabled) { background-position: right center; }
         .glass-header {
             background-color: var(--header-bg);
             backdrop-filter: blur(16px);
@@ -50,16 +51,6 @@
             border-bottom: 1px solid var(--card-border-color);
         }
         
-        #mobile-menu {
-            background-color: var(--header-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--card-border-color);
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
         /* --- Money Saver Tool Specific Styles --- */
         .total-worth-card {
             background-color: var(--card-bg-color);
@@ -80,9 +71,7 @@
             font-size: 3rem;
             font-weight: 900;
             line-height: 1.2;
-            color: var(--text-color);
         }
-
         .bank-entry {
             display: flex;
             align-items: center;
@@ -102,57 +91,73 @@
             font-weight: 600;
             flex-grow: 1;
         }
-        .balance-input {
-            width: 150px;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
+        .balance-input-wrapper {
+            display: flex;
+            align-items: center;
             border: 1px solid var(--card-border-color);
+            border-radius: 0.5rem;
             background-color: var(--bg-color);
+        }
+        .balance-input {
+            width: 120px;
+            padding: 0.5rem 0.75rem;
+            border: none;
+            background-color: transparent;
             color: var(--text-color);
             font-size: 1rem;
             text-align: right;
+            -moz-appearance: textfield;
+        }
+        .balance-input::-webkit-outer-spin-button,
+        .balance-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .currency-symbol {
+            padding-left: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted-color);
+        }
+        .adjust-btn {
+            padding: 0.5rem;
+            background-color: transparent;
+            border: none;
+            color: var(--text-muted-color);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .adjust-btn:hover {
+            color: var(--text-color);
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        .modal-card {
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--card-border-color);
         }
     </style>
 </head>
 <body class="antialiased">
     
     <!-- Header -->
-    <header id="main-header" class="w-full sticky top-0 z-50 glass-header">
+    <header id="main-header" class="w-full sticky top-0 z-40 glass-header">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
                 <a href="index.html" class="flex items-center space-x-2">
                     <svg class="h-8 w-8 primary-gradient-text" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 6v-1.646a4 4 0 00-4-4H6a4 4 0 00-4 4v1.646M12 20v1.646a4 4 0 01-4 4H6a4 4 0 01-4-4V18.354M12 6h3.5A2.5 2.5 0 0118 8.5v.01M12 20h3.5A2.5 2.5 0 0018 17.5v-.01"/></svg>
                     <span class="text-2xl font-black tracking-tighter">Praktikal Era</span>
                 </a>
-                <!-- Desktop Navigation -->
-                <nav class="hidden md:flex items-center space-x-1">
-                    <a href="index.html" class="font-semibold px-4 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Home</a>
-                    <a href="#" class="font-semibold px-4 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Deals</a>
-                    <a href="#" class="font-semibold px-4 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Tools</a>
-                </nav>
-                <!-- Right Side Actions -->
                 <div class="flex items-center space-x-3">
                     <button id="theme-switcher" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
                         <svg id="sun-icon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 12a5 5 0 100-10 5 5 0 000 10z"></path></svg>
                         <svg id="moon-icon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                     </button>
-                    <!-- Mobile Menu Button -->
-                    <div class="md:hidden">
-                        <button id="mobile-menu-button" class="p-2 rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
-                            <svg id="menu-open-icon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
-                            <svg id="menu-close-icon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                        </button>
-                    </div>
                 </div>
-            </div>
-            <!-- Collapsible Mobile Menu -->
-            <div id="mobile-menu" class="md:hidden absolute top-full left-0 w-full rounded-b-2xl shadow-lg">
-                <nav class="flex flex-col p-4 space-y-1">
-                    <a href="index.html" class="font-semibold text-lg px-4 py-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Home</a>
-                    <a href="#" class="font-semibold text-lg px-4 py-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Deals</a>
-                    <a href="#" class="font-semibold text-lg px-4 py-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Tools</a>
-                </nav>
             </div>
         </div>
     </header>
@@ -175,16 +180,28 @@
         </div>
     </main>
 
+    <!-- Adjustment Modal -->
+    <div id="adjustment-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
+        <div class="modal-card w-full max-w-sm p-6 rounded-xl shadow-lg">
+            <h2 id="modal-title" class="text-xl font-bold mb-4">Adjust Balance</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="adjustment-amount" class="text-sm font-medium">Amount</label>
+                    <input type="number" id="adjustment-amount" class="form-input mt-1 w-full" placeholder="0.00" step="0.01">
+                </div>
+                <div class="flex gap-4">
+                    <button id="cancel-btn" class="w-full py-2 rounded-lg font-bold" style="background-color: var(--card-border-color);">Cancel</button>
+                    <button id="confirm-btn" class="primary-button w-full py-2 rounded-lg font-bold">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- Theme Switcher & Nav Menu Logic ---
+        // --- Theme Switcher Logic ---
         const themeSwitcher = document.getElementById('theme-switcher');
         const sunIcon = document.getElementById('sun-icon');
         const moonIcon = document.getElementById('moon-icon');
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const menuOpenIcon = document.getElementById('menu-open-icon');
-        const menuCloseIcon = document.getElementById('menu-close-icon');
-        
         const applyTheme = (theme) => {
             if (theme === 'dark') {
                 document.documentElement.classList.add('dark');
@@ -203,63 +220,124 @@
             localStorage.setItem('theme', newTheme);
             applyTheme(newTheme);
         });
-        mobileMenuButton.addEventListener('click', () => {
-            menuOpenIcon.classList.toggle('hidden');
-            menuCloseIcon.classList.toggle('hidden');
-            if (mobileMenu.style.maxHeight) {
-                mobileMenu.style.maxHeight = null;
-            } else {
-                mobileMenu.style.maxHeight = mobileMenu.scrollHeight + "px";
-            }
-        });
 
         // --- Money Saver Logic ---
         const banks = [
-            { name: 'GCash', icon: 'https://www.gcash.com/wp-content/uploads/2023/07/GCash-Logo-1.png' },
-            { name: 'Maya', icon: 'https://www.maya.ph/icon.svg' },
-            { name: 'BPI', icon: 'https://www.bpi.com.ph/content/dam/bpi/bpi-logo-288x288.png' },
-            { name: 'BDO', icon: 'https://www.bdo.com.ph/sites/default/files/images/logo.png' },
-            { name: 'SeaBank', icon: 'https://www.seabank.co.id/logo-seabank.png' },
-            { name: 'Metrobank', icon: 'https://www.metrobank.com.ph/img/metrobank-logo-alt.png' },
-            { name: 'UnionBank', icon: 'https://www.unionbankph.com/images/default-source/default-album/logo.png' },
-            { name: 'Landbank', icon: 'https://www.landbank.com/images/logo-landbank.png' },
-            { name: 'Security Bank', icon: 'https://www.securitybank.com/wp-content/uploads/2022/09/sb-logo-deva.png' },
-            { name: 'RCBC', icon: 'https://www.rcbc.com/uploads/media/rcbc-logo-1.png' },
-            { name: 'GoTyme Bank', icon: 'https://www.gotyme.com.ph/GoTyme-Bank-Logo.png' },
-            { name: 'Coins.ph', icon: 'https://coins.ph/src/images/coins-logo-300x300.png' },
-            { name: 'GrabPay', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Grab_logo.svg/2560px-Grab_logo.svg.png' }
+            { id: 'gcash', name: 'GCash', icon: 'https://www.gcash.com/wp-content/uploads/2023/07/GCash-Logo-1.png' },
+            { id: 'maya', name: 'Maya', icon: 'https://www.maya.ph/icon.svg' },
+            { id: 'bpi', name: 'BPI', icon: 'https://www.bpi.com.ph/content/dam/bpi/bpi-logo-288x288.png' },
+            { id: 'bdo', name: 'BDO', icon: 'https://www.bdo.com.ph/sites/default/files/images/logo.png' },
+            { id: 'seabank', name: 'SeaBank', icon: 'https://www.seabank.co.id/logo-seabank.png' },
+            { id: 'metrobank', name: 'Metrobank', icon: 'https://www.metrobank.com.ph/img/metrobank-logo-alt.png' },
+            { id: 'unionbank', name: 'UnionBank', icon: 'https://www.unionbankph.com/images/default-source/default-album/logo.png' },
+            { id: 'landbank', name: 'Landbank', icon: 'https://www.landbank.com/images/logo-landbank.png' },
+            { id: 'securitybank', name: 'Security Bank', icon: 'https://www.securitybank.com/wp-content/uploads/2022/09/sb-logo-deva.png' },
+            { id: 'rcbc', name: 'RCBC', icon: 'https://www.rcbc.com/uploads/media/rcbc-logo-1.png' },
+            { id: 'gotyme', name: 'GoTyme Bank', icon: 'https://www.gotyme.com.ph/GoTyme-Bank-Logo.png' },
+            { id: 'coinsph', name: 'Coins.ph', icon: 'https://coins.ph/src/images/coins-logo-300x300.png' },
+            { id: 'grabpay', name: 'GrabPay', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Grab_logo.svg/2560px-Grab_logo.svg.png' }
         ];
 
         const bankListContainer = document.getElementById('bank-list');
         const totalWorthAmountEl = document.getElementById('total-worth-amount');
+        const modal = document.getElementById('adjustment-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const adjustmentAmountInput = document.getElementById('adjustment-amount');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const confirmBtn = document.getElementById('confirm-btn');
+
+        let balances = JSON.parse(localStorage.getItem('praktikalBalances')) || {};
+
+        function saveBalances() {
+            localStorage.setItem('praktikalBalances', JSON.stringify(balances));
+        }
 
         const calculateTotal = () => {
-            let total = 0;
-            const inputs = document.querySelectorAll('.balance-input');
-            inputs.forEach(input => {
-                const value = parseFloat(input.value);
-                if (!isNaN(value)) {
-                    total += value;
-                }
-            });
+            const total = Object.values(balances).reduce((sum, val) => sum + val, 0);
             totalWorthAmountEl.textContent = `₱${total.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         };
 
+        function openModal(bankId, type) {
+            modal.classList.remove('hidden');
+            modal.dataset.bankId = bankId;
+            modal.dataset.type = type;
+            modalTitle.textContent = `${type === 'add' ? 'Add to' : 'Subtract from'} ${banks.find(b => b.id === bankId).name}`;
+            adjustmentAmountInput.value = '';
+            adjustmentAmountInput.focus();
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+
+        confirmBtn.addEventListener('click', () => {
+            const amount = parseFloat(adjustmentAmountInput.value);
+            const bankId = modal.dataset.bankId;
+            const type = modal.dataset.type;
+
+            if (!isNaN(amount) && amount > 0) {
+                const currentBalance = balances[bankId] || 0;
+                balances[bankId] = type === 'add' ? currentBalance + amount : currentBalance - amount;
+                
+                const inputEl = document.querySelector(`.balance-input[data-bank-id="${bankId}"]`);
+                inputEl.value = balances[bankId].toFixed(2);
+                
+                saveBalances();
+                calculateTotal();
+                closeModal();
+            } else {
+                alert('Please enter a valid positive amount.');
+            }
+        });
+
+        cancelBtn.addEventListener('click', closeModal);
+
         banks.forEach(bank => {
+            if (!balances[bank.id]) {
+                balances[bank.id] = 0;
+            }
+
             const entryDiv = document.createElement('div');
             entryDiv.className = 'bank-entry';
             entryDiv.innerHTML = `
-                <img src="${bank.icon}" alt="${bank.name} Logo" class="bank-icon" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+                <img src="${bank.icon}" alt="${bank.name} Logo" class="bank-icon" onerror="this.style.display='none';">
                 <span class="bank-name">${bank.name}</span>
-                <input type="number" class="balance-input" placeholder="0.00" step="0.01">
+                <div class="balance-input-wrapper">
+                    <span class="currency-symbol">₱</span>
+                    <input type="number" class="balance-input" placeholder="0.00" step="0.01" data-bank-id="${bank.id}" value="${balances[bank.id].toFixed(2)}">
+                </div>
+                <div class="flex">
+                    <button class="adjust-btn add-btn" data-bank-id="${bank.id}">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                    </button>
+                    <button class="adjust-btn minus-btn" data-bank-id="${bank.id}">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6"/></svg>
+                    </button>
+                </div>
             `;
             bankListContainer.appendChild(entryDiv);
         });
 
-        const allInputs = document.querySelectorAll('.balance-input');
-        allInputs.forEach(input => {
-            input.addEventListener('input', calculateTotal);
+        document.querySelectorAll('.balance-input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const bankId = e.target.dataset.bankId;
+                const value = parseFloat(e.target.value);
+                balances[bankId] = isNaN(value) ? 0 : value;
+                e.target.value = balances[bankId].toFixed(2);
+                saveBalances();
+                calculateTotal();
+            });
         });
+
+        document.querySelectorAll('.add-btn').forEach(btn => {
+            btn.addEventListener('click', () => openModal(btn.dataset.bankId, 'add'));
+        });
+
+        document.querySelectorAll('.minus-btn').forEach(btn => {
+            btn.addEventListener('click', () => openModal(btn.dataset.bankId, 'subtract'));
+        });
+
+        calculateTotal();
     </script>
 </body>
 </html>
