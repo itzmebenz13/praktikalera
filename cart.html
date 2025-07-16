@@ -116,16 +116,23 @@
                             <span style="color: var(--text-muted-color);">Subtotal</span>
                             <span id="summary-subtotal" class="font-semibold">₱0.00</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span style="color: var(--text-muted-color);">Shipping</span>
-                            <span id="summary-shipping" class="font-semibold">₱50.00</span>
+                        <div class="flex justify-between hidden" id="discount-row">
+                            <span style="color: var(--text-muted-color);">Discount</span>
+                            <span id="summary-discount" class="font-semibold text-green-500">-₱0.00</span>
                         </div>
                     </div>
                     <div class="flex justify-between font-bold text-lg border-t pt-4" style="border-color: var(--card-border-color);">
                         <span>Total</span>
-                        <span id="summary-total">₱50.00</span>
+                        <span id="summary-total">₱0.00</span>
                     </div>
-                    <button id="checkout-btn" class="primary-button w-full mt-6 py-3 rounded-lg font-bold">Proceed to Checkout</button>
+                    <div class="mt-4">
+                        <div class="flex gap-2">
+                            <input type="text" id="coupon-code" class="w-full px-4 py-2 rounded-lg" placeholder="Voucher Code" style="background-color: var(--bg-color); border: 1px solid var(--card-border-color);">
+                            <button id="apply-coupon-btn" class="primary-button px-4 rounded-lg font-bold text-sm">Apply</button>
+                        </div>
+                        <p id="coupon-message" class="text-xs mt-2 text-center"></p>
+                    </div>
+                    <a href="checkout.html" id="checkout-btn" class="primary-button block w-full mt-6 py-3 rounded-lg font-bold text-center">Proceed to Checkout</a>
                 </div>
             </div>
         </div>
@@ -160,20 +167,30 @@
             const cartItemsContainer = document.getElementById('cart-items-container');
             const emptyCartMessage = document.getElementById('empty-cart-message');
             const subtotalEl = document.getElementById('summary-subtotal');
-            const shippingEl = document.getElementById('summary-shipping');
             const totalEl = document.getElementById('summary-total');
+            const discountRow = document.getElementById('discount-row');
+            const discountEl = document.getElementById('summary-discount');
+            const couponInput = document.getElementById('coupon-code');
+            const applyCouponBtn = document.getElementById('apply-coupon-btn');
+            const couponMessage = document.getElementById('coupon-message');
             const checkoutBtn = document.getElementById('checkout-btn');
 
             let cart = JSON.parse(localStorage.getItem('praktikalCart')) || [];
+            let discount = 0;
+
+            const validCoupons = {
+                "PRAKTIKAL10": 0.10, // 10% off
+                "SAVE50": 50 // ₱50 off
+            };
 
             function renderCart() {
                 cartItemsContainer.innerHTML = ''; 
                 if (cart.length === 0) {
                     emptyCartMessage.classList.remove('hidden');
-                    checkoutBtn.disabled = true;
+                    checkoutBtn.classList.add('opacity-50', 'pointer-events-none');
                 } else {
                     emptyCartMessage.classList.add('hidden');
-                    checkoutBtn.disabled = false;
+                    checkoutBtn.classList.remove('opacity-50', 'pointer-events-none');
                     cart.forEach(item => {
                         const itemEl = document.createElement('div');
                         itemEl.className = 'flex items-center gap-4 p-4 rounded-lg';
@@ -196,18 +213,45 @@
                         cartItemsContainer.appendChild(itemEl);
                     });
                 }
-                updateSummary();
+                updateTotals();
             }
 
-            function updateSummary() {
+            function updateTotals() {
                 const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                const shipping = cart.length > 0 ? 50.00 : 0;
-                const total = subtotal + shipping;
+                let total = subtotal;
 
+                if (discount > 0) {
+                    let discountAmount = 0;
+                    if (discount < 1) { // Percentage discount
+                        discountAmount = subtotal * discount;
+                    } else { // Fixed amount discount
+                        discountAmount = discount;
+                    }
+                    total -= discountAmount;
+                    discountEl.textContent = `-₱${discountAmount.toFixed(2)}`;
+                    discountRow.classList.remove('hidden');
+                } else {
+                    discountRow.classList.add('hidden');
+                }
+                
                 subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
-                shippingEl.textContent = `₱${shipping.toFixed(2)}`;
-                totalEl.textContent = `₱${total.toFixed(2)}`;
+                totalEl.textContent = `₱${Math.max(0, total).toFixed(2)}`;
             }
+
+            applyCouponBtn.addEventListener('click', () => {
+                const code = couponInput.value.trim().toUpperCase();
+                if (validCoupons[code]) {
+                    discount = validCoupons[code];
+                    couponMessage.textContent = `Success! Coupon "${code}" applied.`;
+                    couponMessage.style.color = '#10b981';
+                    updateTotals();
+                } else {
+                    couponMessage.textContent = 'Invalid coupon code.';
+                    couponMessage.style.color = '#ef4444';
+                    discount = 0;
+                    updateTotals();
+                }
+            });
 
             cartItemsContainer.addEventListener('click', (e) => {
                 if (e.target.closest('.remove-item-btn')) {
@@ -226,17 +270,8 @@
                     if (itemInCart && newQuantity > 0) {
                         itemInCart.quantity = newQuantity;
                         localStorage.setItem('praktikalCart', JSON.stringify(cart));
-                        updateSummary();
+                        updateTotals();
                     }
-                }
-            });
-
-            // FIXED: Added event listener for the checkout button
-            checkoutBtn.addEventListener('click', () => {
-                if (cart.length > 0) {
-                    alert('Checkout functionality is not yet implemented. This is where you would redirect to a checkout page.');
-                } else {
-                    alert('Your cart is empty!');
                 }
             });
 
