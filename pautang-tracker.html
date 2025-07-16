@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pautang Tracker - Praktikal Era</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* --- HIGH-CONTRAST THEME --- */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #111827;
+            --text-muted-color: #4b5563;
+            --card-bg-color: #f9fafb;
+            --card-border-color: #e5e7eb;
+            --header-bg: rgba(255, 255, 255, 0.7);
+            /* Gradient */
+            --primary-grad-from: #0d9488;
+            --primary-grad-to: #22d3ee;
+            /* Pautang/Utang Colors */
+            --pautang-color: #3b82f6; /* Blue-500 */
+            --utang-color: #f59e0b;   /* Amber-500 */
+            --settled-color: #6b7280; /* Gray-500 */
+        }
+        .dark {
+            --bg-color: #020617;
+            --text-color: #f9fafb;
+            --text-muted-color: #9ca3af;
+            --card-bg-color: #111827;
+            --card-border-color: #334155;
+            --header-bg: rgba(2, 6, 23, 0.7);
+            --pautang-color: #60a5fa; /* Blue-400 */
+            --utang-color: #fcd34d;   /* Amber-300 */
+            --settled-color: #6b7280; /* Gray-500 */
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .primary-gradient-text {
+            background: linear-gradient(to right, var(--primary-grad-from), var(--primary-grad-to));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .primary-button {
+            background-image: linear-gradient(to right, var(--primary-grad-from), var(--primary-grad-to));
+            color: white;
+        }
+        .glass-header {
+            background-color: var(--header-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--card-border-color);
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--card-border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        /* --- Pautang Tracker Specific Styles --- */
+        .summary-card {
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--card-border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+        .pautang-text { color: var(--pautang-color); }
+        .utang-text { color: var(--utang-color); }
+
+        /* FIXED Toggle Switch Styles */
+        .toggle-bg {
+            background-color: var(--utang-color);
+            transition: background-color 0.2s ease-in-out;
+        }
+        input:checked ~ .relative .toggle-bg {
+            background-color: var(--pautang-color);
+        }
+        .toggle-dot {
+            transition: transform 0.2s ease-in-out;
+        }
+        input:checked ~ .relative .toggle-dot {
+            transform: translateX(1.5rem); /* 24px */
+        }
+
+        /* Transaction List */
+        .transaction-item {
+            border-left-width: 4px;
+            background-color: var(--card-bg-color);
+        }
+        .pautang-border { border-color: var(--pautang-color); }
+        .utang-border { border-color: var(--utang-color); }
+        .settled-border { border-color: var(--settled-color); }
+    </style>
+</head>
+<body class="antialiased">
+    
+    <!-- Header -->
+    <header id="main-header" class="w-full sticky top-0 z-40 glass-header">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <svg class="h-8 w-8 primary-gradient-text" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 6v-1.646a4 4 0 00-4-4H6a4 4 0 00-4 4v1.646M12 20v1.646a4 4 0 01-4 4H6a4 4 0 01-4-4V18.354M12 6h3.5A2.5 2.5 0 0118 8.5v.01M12 20h3.5A2.5 2.5 0 0018 17.5v-.01"/></svg>
+                    <span class="text-2xl font-black tracking-tighter">Praktikal Era</span>
+                </a>
+                <div class="flex items-center space-x-3">
+                    <button id="theme-switcher" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+                        <svg id="sun-icon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 12a5 5 0 100-10 5 5 0 000 10z"></path></svg>
+                        <svg id="moon-icon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <header class="text-center mb-8">
+            <h1 class="text-5xl md:text-6xl font-black tracking-tighter mb-4">Pautang Tracker</h1>
+            <p class="text-lg" style="color: var(--text-muted-color);">Privately track money you lent and borrowed.</p>
+        </header>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div class="summary-card">
+                <p class="text-sm font-medium" style="color: var(--text-muted-color);">Total Amount You Lent (Pautang)</p>
+                <p id="total-pautang" class="text-3xl font-bold pautang-text">₱0.00</p>
+            </div>
+            <div class="summary-card">
+                <p class="text-sm font-medium" style="color: var(--text-muted-color);">Total Amount You Owe (Utang)</p>
+                <p id="total-utang" class="text-3xl font-bold utang-text">₱0.00</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
+            <!-- Add Transaction Form -->
+            <div class="lg:col-span-1 p-6 rounded-lg sticky top-24" style="background-color: var(--card-bg-color); border: 1px solid var(--card-border-color);">
+                <h2 class="text-xl font-bold mb-4">Add New Entry</h2>
+                <form id="tracker-form" class="space-y-4">
+                    <div>
+                        <label class="flex items-center justify-center cursor-pointer">
+                            <span class="mr-3 font-semibold utang-text">Utang</span>
+                            <input type="checkbox" id="type-toggle" class="hidden">
+                            <div class="relative">
+                                <div class="w-14 h-8 toggle-bg rounded-full shadow-inner"></div>
+                                <div class="toggle-dot absolute w-6 h-6 bg-white rounded-full shadow inset-y-0 left-0" style="top: 4px; left: 4px;"></div>
+                            </div>
+                            <span class="ml-3 font-semibold pautang-text">Pautang</span>
+                        </label>
+                    </div>
+                    <div>
+                        <label for="person-name" class="text-sm font-medium">Person's Name / Nickname</label>
+                        <input type="text" id="person-name" class="form-input mt-1" placeholder="e.g., Juan, Tindahan" required>
+                    </div>
+                    <div>
+                        <label for="amount" class="text-sm font-medium">Amount (₱)</label>
+                        <input type="number" id="amount" class="form-input mt-1" placeholder="0.00" step="0.01" required>
+                    </div>
+                    <div>
+                        <label for="description" class="text-sm font-medium">Description (Optional)</label>
+                        <input type="text" id="description" class="form-input mt-1" placeholder="e.g., For lunch, Load">
+                    </div>
+                    <button type="submit" class="primary-button w-full py-3 rounded-lg font-bold">Add Entry</button>
+                </form>
+            </div>
+
+            <!-- Transaction Lists -->
+            <div class="lg:col-span-2 space-y-8">
+                <div>
+                    <h2 class="text-2xl font-bold mb-4">Active List</h2>
+                    <div id="active-list" class="space-y-3"></div>
+                </div>
+                 <div>
+                    <h2 class="text-2xl font-bold mb-4 opacity-50">Settled History</h2>
+                    <div id="settled-list" class="space-y-3 opacity-50"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- Theme Switcher Logic ---
+        const themeSwitcher = document.getElementById('theme-switcher');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const applyTheme = (theme) => {
+            if (theme === 'dark') { document.documentElement.classList.add('dark'); sunIcon.classList.add('hidden'); moonIcon.classList.remove('hidden'); } 
+            else { document.documentElement.classList.remove('dark'); sunIcon.classList.remove('hidden'); moonIcon.classList.add('hidden'); }
+        };
+        const currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        applyTheme(currentTheme);
+        themeSwitcher.addEventListener('click', () => {
+            const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        });
+
+        // --- Pautang Tracker Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const trackerForm = document.getElementById('tracker-form');
+            const typeToggle = document.getElementById('type-toggle');
+            const personNameInput = document.getElementById('person-name');
+            const amountInput = document.getElementById('amount');
+            const descriptionInput = document.getElementById('description');
+            const activeList = document.getElementById('active-list');
+            const settledList = document.getElementById('settled-list');
+            const totalPautangEl = document.getElementById('total-pautang');
+            const totalUtangEl = document.getElementById('total-utang');
+
+            let transactions = JSON.parse(localStorage.getItem('praktikalTracker')) || [];
+
+            function saveTransactions() {
+                localStorage.setItem('praktikalTracker', JSON.stringify(transactions));
+            }
+
+            function renderTransactions() {
+                activeList.innerHTML = '';
+                settledList.innerHTML = '';
+
+                const sorted = transactions.sort((a,b) => b.id - a.id);
+                
+                let hasActive = false;
+                let hasSettled = false;
+
+                sorted.forEach(t => {
+                    const itemEl = document.createElement('div');
+                    const typeText = t.type === 'pautang' ? 'You Lent' : 'You Owe';
+                    const borderColorClass = t.paid ? 'settled-border' : (t.type === 'pautang' ? 'pautang-border' : 'utang-border');
+                    
+                    itemEl.className = `transaction-item flex justify-between items-center p-4 rounded-md ${borderColorClass}`;
+                    itemEl.innerHTML = `
+                        <div class="${t.paid ? 'line-through' : ''}">
+                            <p class="font-bold text-lg">${t.person}</p>
+                            <p class="text-sm" style="color: var(--text-muted-color);">${t.description || typeText}</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="font-bold text-xl">₱${t.amount.toLocaleString('en-PH', {minimumFractionDigits: 2})}</span>
+                            ${!t.paid ? `<button class="mark-paid-btn p-2 rounded-full hover:bg-green-500/10 text-green-500" data-id="${t.id}" title="Mark as Paid"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></button>` : ''}
+                            <button class="remove-btn p-2 rounded-full hover:bg-red-500/10 text-red-500" data-id="${t.id}" title="Delete Entry">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
+                        </div>
+                    `;
+                    
+                    if (t.paid) {
+                        settledList.appendChild(itemEl);
+                        hasSettled = true;
+                    } else {
+                        activeList.appendChild(itemEl);
+                        hasActive = true;
+                    }
+                });
+
+                if (!hasActive) activeList.innerHTML = `<p class="text-center p-4" style="color: var(--text-muted-color);">No active entries. Add one to get started!</p>`;
+                if (!hasSettled) settledList.innerHTML = `<p class="text-center p-4" style="color: var(--text-muted-color);">No settled history yet.</p>`;
+                
+                updateSummary();
+            }
+
+            function updateSummary() {
+                const pautangTotal = transactions.filter(t => t.type === 'pautang' && !t.paid).reduce((sum, t) => sum + t.amount, 0);
+                const utangTotal = transactions.filter(t => t.type === 'utang' && !t.paid).reduce((sum, t) => sum + t.amount, 0);
+                
+                totalPautangEl.textContent = `₱${pautangTotal.toLocaleString('en-PH', {minimumFractionDigits: 2})}`;
+                totalUtangEl.textContent = `₱${utangTotal.toLocaleString('en-PH', {minimumFractionDigits: 2})}`;
+            }
+
+            trackerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const type = typeToggle.checked ? 'pautang' : 'utang';
+                const person = personNameInput.value.trim();
+                const amount = parseFloat(amountInput.value);
+                const description = descriptionInput.value.trim();
+
+                if (!person || isNaN(amount) || amount <= 0) {
+                    alert('Please enter a valid name and amount.');
+                    return;
+                }
+
+                transactions.push({ id: Date.now(), type, person, amount, description, paid: false });
+                saveTransactions();
+                renderTransactions();
+                trackerForm.reset();
+            });
+
+            document.body.addEventListener('click', (e) => {
+                const removeBtn = e.target.closest('.remove-btn');
+                if (removeBtn) {
+                    const id = parseInt(removeBtn.dataset.id, 10);
+                    transactions = transactions.filter(t => t.id !== id);
+                    saveTransactions();
+                    renderTransactions();
+                }
+
+                const paidBtn = e.target.closest('.mark-paid-btn');
+                if (paidBtn) {
+                    const id = parseInt(paidBtn.dataset.id, 10);
+                    const transaction = transactions.find(t => t.id === id);
+                    if (transaction) {
+                        transaction.paid = true;
+                        saveTransactions();
+                        renderTransactions();
+                    }
+                }
+            });
+
+            renderTransactions();
+        });
+    </script>
+</body>
+</html>
