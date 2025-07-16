@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - Praktikal Era</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for social icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" xintegrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* --- HIGH-CONTRAST THEME --- */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #111827;
+            --text-muted-color: #4b5563;
+            --card-bg-color: #f9fafb;
+            --card-border-color: #e5e7eb;
+            --primary-grad-from: #0d9488;
+            --primary-grad-to: #22d3ee;
+        }
+        .dark {
+            --bg-color: #020617;
+            --text-color: #f9fafb;
+            --text-muted-color: #9ca3af;
+            --card-bg-color: #111827;
+            --card-border-color: #334155;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            text-align: center;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .primary-button {
+            background-image: linear-gradient(to right, var(--primary-grad-from), var(--primary-grad-to));
+            background-size: 200% auto;
+            color: white;
+            transition: background-position 0.5s ease;
+        }
+        .primary-button:hover { background-position: right center; }
+        
+        /* Registration Card */
+        .auth-card {
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--card-border-color);
+            border-radius: 1.25rem;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            text-align: left;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -4px rgba(0,0,0,0.05);
+        }
+        .auth-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--card-border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .auth-input:focus {
+            outline: none;
+            border-color: var(--primary-grad-to);
+            box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.3);
+        }
+        .link-subtle {
+            font-size: 0.875rem;
+            color: var(--text-muted-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .link-subtle:hover { color: var(--text-color); }
+
+        /* Social Login Button Styles */
+        .social-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 0.6rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: 1px solid var(--card-border-color);
+            background-color: transparent;
+            color: var(--text-color);
+            transition: background-color 0.3s;
+        }
+        .social-button:hover { background-color: var(--bg-color); }
+        .social-button i { margin-right: 0.75rem; font-size: 1.25rem; }
+        
+        /* Custom Validation Styles */
+        .auth-input.error { border-color: #ef4444 !important; }
+        .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="auth-card">
+        <div class="text-center mb-8">
+            <a href="index.html" class="inline-block mb-4">
+                <svg class="h-10 w-10 primary-gradient-text" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 6v-1.646a4 4 0 00-4-4H6a4 4 0 00-4 4v1.646M12 20v1.646a4 4 0 01-4 4H6a4 4 0 01-4-4V18.354M12 6h3.5A2.5 2.5 0 0118 8.5v.01M12 20h3.5A2.5 2.5 0 0018 17.5v-.01"/></svg>
+            </a>
+            <h1 class="text-3xl font-black tracking-tighter">Create an Account</h1>
+            <p class="mt-2" style="color: var(--text-muted-color);">Join Praktikal Era to start saving.</p>
+        </div>
+
+        <form id="register-form" action="#" method="POST" novalidate>
+            <div class="flex flex-col gap-4">
+                <div>
+                    <label for="fullname" class="block text-sm font-medium text-left">Full Name</label>
+                    <input type="text" id="fullname" name="fullname" class="auth-input" required>
+                    <p id="fullname-error" class="error-message hidden text-left">Please enter your full name.</p>
+                </div>
+                <div>
+                    <label for="username" class="block text-sm font-medium text-left">Username</label>
+                    <input type="text" id="username" name="username" class="auth-input" required>
+                    <p id="username-error" class="error-message hidden text-left">Please enter a username.</p>
+                </div>
+                 <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="birthdate" class="block text-sm font-medium text-left">Birthdate</label>
+                        <input type="date" id="birthdate" name="birthdate" class="auth-input" required>
+                        <p id="birthdate-error" class="error-message hidden text-left">Please enter your birthdate.</p>
+                    </div>
+                    <div>
+                        <label for="gender" class="block text-sm font-medium text-left">Gender</label>
+                        <select id="gender" name="gender" class="auth-input" required>
+                            <option value="">Select...</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                            <option value="prefer_not_to_say">Prefer not to say</option>
+                        </select>
+                        <p id="gender-error" class="error-message hidden text-left">Please select a gender.</p>
+                    </div>
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-left">Email Address</label>
+                    <input type="email" id="email" name="email" class="auth-input" required>
+                    <p id="email-error" class="error-message hidden text-left">Please enter a valid email.</p>
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-left">Password</label>
+                    <input type="password" id="password" name="password" class="auth-input" required>
+                    <p id="password-error" class="error-message hidden text-left">Password cannot be empty.</p>
+                </div>
+                 <div>
+                    <label for="confirm-password" class="block text-sm font-medium text-left">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" class="auth-input" required>
+                    <p id="confirm-password-error" class="error-message hidden text-left">Passwords do not match.</p>
+                </div>
+                <button type="submit" class="primary-button w-full mt-2 py-3 rounded-lg font-bold">Create Account</button>
+            </div>
+        </form>
+
+        <div class="flex items-center my-6">
+            <hr class="flex-grow" style="border-color: var(--card-border-color);">
+            <span class="mx-4 text-xs font-medium" style="color: var(--text-muted-color);">OR</span>
+            <hr class="flex-grow" style="border-color: var(--card-border-color);">
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+            <a href="#" class="social-button"><i class="fab fa-google"></i>Google</a>
+            <a href="#" class="social-button"><i class="fab fa-facebook-f"></i>Facebook</a>
+            <a href="#" class="social-button"><i class="fab fa-github"></i>GitHub</a>
+            <a href="#" class="social-button"><i class="fab fa-discord"></i>Discord</a>
+        </div>
+
+        <div class="mt-8 text-center">
+            <a href="login.html" class="link-subtle">Already have an account? <span class="font-bold" style="color: var(--text-color);">Log in</span></a>
+        </div>
+    </div>
+
+    <script>
+        // --- Theme Switcher Logic ---
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+
+        // --- Custom Form Validation ---
+        const form = document.getElementById('register-form');
+        const fullnameInput = document.getElementById('fullname');
+        const usernameInput = document.getElementById('username');
+        const birthdateInput = document.getElementById('birthdate');
+        const genderInput = document.getElementById('gender');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm-password');
+
+        const fullnameError = document.getElementById('fullname-error');
+        const usernameError = document.getElementById('username-error');
+        const birthdateError = document.getElementById('birthdate-error');
+        const genderError = document.getElementById('gender-error');
+        const emailError = document.getElementById('email-error');
+        const passwordError = document.getElementById('password-error');
+        const confirmPasswordError = document.getElementById('confirm-password-error');
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            let isFormValid = true;
+
+            // Validate Full Name
+            if (fullnameInput.value.trim() === '') {
+                fullnameError.classList.remove('hidden');
+                fullnameInput.classList.add('error');
+                isFormValid = false;
+            } else {
+                fullnameError.classList.add('hidden');
+                fullnameInput.classList.remove('error');
+            }
+
+            // Validate Username
+            if (usernameInput.value.trim() === '') {
+                usernameError.classList.remove('hidden');
+                usernameInput.classList.add('error');
+                isFormValid = false;
+            } else {
+                usernameError.classList.add('hidden');
+                usernameInput.classList.remove('error');
+            }
+
+            // Validate Birthdate
+            if (birthdateInput.value === '') {
+                birthdateError.classList.remove('hidden');
+                birthdateInput.classList.add('error');
+                isFormValid = false;
+            } else {
+                birthdateError.classList.add('hidden');
+                birthdateInput.classList.remove('error');
+            }
+
+            // Validate Gender
+            if (genderInput.value === '') {
+                genderError.classList.remove('hidden');
+                genderInput.classList.add('error');
+                isFormValid = false;
+            } else {
+                genderError.classList.add('hidden');
+                genderInput.classList.remove('error');
+            }
+
+            // Validate Email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailInput.value)) {
+                emailError.classList.remove('hidden');
+                emailInput.classList.add('error');
+                isFormValid = false;
+            } else {
+                emailError.classList.add('hidden');
+                emailInput.classList.remove('error');
+            }
+
+            // Validate Password
+            if (passwordInput.value.trim() === '') {
+                passwordError.classList.remove('hidden');
+                passwordInput.classList.add('error');
+                isFormValid = false;
+            } else {
+                passwordError.classList.add('hidden');
+                passwordInput.classList.remove('error');
+            }
+
+            // Validate Confirm Password
+            if (confirmPasswordInput.value !== passwordInput.value || confirmPasswordInput.value.trim() === '') {
+                confirmPasswordError.classList.remove('hidden');
+                confirmPasswordInput.classList.add('error');
+                isFormValid = false;
+            } else {
+                confirmPasswordError.classList.add('hidden');
+                confirmPasswordInput.classList.remove('error');
+            }
+
+            if (isFormValid) {
+                // In a real application, you would submit the form here.
+                alert('Account created successfully! (This is a demo)');
+                // form.submit(); 
+            }
+        });
+    </script>
+</body>
+</html>
